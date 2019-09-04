@@ -1,32 +1,32 @@
----
-apiVersion: apps/v1
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: podinfo
-  namespace: test
   labels:
     app: podinfo
+  name: podinfo
+  namespace: test
 spec:
   minReadySeconds: 5
-  revisionHistoryLimit: 5
   progressDeadlineSeconds: 60
-  strategy:
-    rollingUpdate:
-      maxUnavailable: 0
-    type: RollingUpdate
   selector:
     matchLabels:
       app: podinfo
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 0
+    type: RollingUpdate
   template:
     metadata:
       annotations:
         prometheus.io/scrape: "true"
+      creationTimestamp: null
       labels:
         app: podinfo
     spec:
       containers:
       - name: podinfod
-        image: stefanprodan/podinfo:2.1.1
+        image: stefanprodan/podinfo:2.1.2
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 9898
@@ -36,6 +36,8 @@ spec:
         - ./podinfo
         - --port=9898
         - --level=info
+        - --random-delay=false
+        - --random-error=false
         env:
         - name: PODINFO_UI_COLOR
           value: blue
@@ -46,7 +48,10 @@ spec:
             - check
             - http
             - localhost:9898/healthz
+          failureThreshold: 3
           initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
           timeoutSeconds: 5
         readinessProbe:
           exec:
@@ -55,12 +60,22 @@ spec:
             - check
             - http
             - localhost:9898/readyz
+          failureThreshold: 3
           initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
           timeoutSeconds: 5
         resources:
           limits:
-            cpu: 2000m
+            cpu: "2"
             memory: 512Mi
           requests:
             cpu: 100m
             memory: 64Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
