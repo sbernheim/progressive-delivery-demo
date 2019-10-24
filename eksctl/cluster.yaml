@@ -1,0 +1,18 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: eks-appmesh-progressive-delivery
+  region: us-east-1
+  version: '1.14'
+  tags:
+    CreatedBy: 'Sebastian Bernheim'
+    Team: 'Customer Success'
+nodeGroups:
+  - name: default
+    instanceType: m5.large
+    desiredCapacity: 3
+    volumeSize: 120
+    iam:
+      withAddonPolicies:
+        appMesh: true
+        xRay: true
