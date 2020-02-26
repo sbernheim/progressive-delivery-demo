@@ -6,6 +6,8 @@ metadata:
     app: podinfo
   name: podinfo
   namespace: test
+  annotations:
+    flux.weave.works/automated: 'true'
 spec:
   minReadySeconds: 5
   progressDeadlineSeconds: 60
