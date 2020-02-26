@@ -1,0 +1,1 @@
+{"jobID":"e042c024-b7f8-b45a-33ba-b45d332b8a5d","spec":{"type":"policy","cause":{"Message":"","User":"Sebastian Bernheim \u003csebastian@weave.works\u003e"},"spec":{"test:deployment/podinfo":{"add":{"automated":"true"},"remove":null}}},"result":null}
